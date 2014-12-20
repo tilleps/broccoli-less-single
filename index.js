@@ -42,8 +42,15 @@ LessCompiler.prototype.updateCache = function (srcDir, destDir) {
 
     less.render(data, lessOptions)
       .then(function (output) {
-        fs.writeFileSync(destFile, output.css, { encoding: 'utf8' });
-        resolve();
+
+        fs.writeFile(destFile, output.css, { encoding: 'utf8' }, function (err) {
+          if (err) {
+            return reject(err);
+          }
+
+          return resolve(output);
+        });
+
       }, function (err) {
         less.writeError(err, lessOptions);
         reject(err);
